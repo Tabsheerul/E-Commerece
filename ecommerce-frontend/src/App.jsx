@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useLocation, useRoutes } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -25,6 +25,11 @@ const AnimatedRoutes = () => {
 
   const currIndex = pageOrder[currPathBase] ?? 1;
   const prevIndex = pageOrder[prevPathBase] ?? 1;
+
+  // Scroll to top on every route change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [location.pathname]);
 
   if (currPathBase !== prevPathBase) {
     direction.current = currIndex >= prevIndex ? 1 : -1;

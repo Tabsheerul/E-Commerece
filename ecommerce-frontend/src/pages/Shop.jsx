@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
 
 // All the filter categories
@@ -34,9 +34,21 @@ const Shop = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [filterTrigger, setFilterTrigger] = useState(0);
 
-  // Fetch products whenever filters change
+  // Track direction: +1 = going forward (higher page), -1 = going back (lower page)
+  const pageDirection  = useRef(0);
+  const prevPage       = useRef(0);
+  const isPagination   = useRef(false); // true when only the page number changed
+  const scrollRafId    = useRef(null);
+
+  // Ref to the top of the product grid
+  const gridRef = useRef(null);
+
+  // Fetch products whenever filters or page change
   useEffect(() => {
-    setLoading(true);
+    // Only show the loading skeleton when filters/search change, NOT on page turns.
+    // This keeps the grid height stable so the scroll animation has nothing to fight.
+    if (!isPagination.current) setLoading(true);
+
     const params = new URLSearchParams();
     if (selectedCategory !== 'All') params.append('category', selectedCategory);
     if (searchTerm) params.append('keyword', searchTerm);
@@ -53,12 +65,28 @@ const Shop = () => {
         setProducts(data.content);
         setTotalPages(data.totalPages);
         setLoading(false);
+        isPagination.current = false;
       })
       .catch(error => {
         console.error('Error fetching products:', error);
         setLoading(false);
+        isPagination.current = false;
       });
   }, [searchTerm, sortBy, filterTrigger, currentPage]);
+
+  // Scroll to top on pagination — no layout shift = perfectly smooth native scroll
+  useEffect(() => {
+    if (currentPage === 0 && prevPage.current === 0) return;
+    pageDirection.current = currentPage >= prevPage.current ? 1 : -1;
+    prevPage.current = currentPage;
+    // Wait one paint frame so React has committed the render,
+    // then let the browser's own smooth scroll engine do its job.
+    if (scrollRafId.current) cancelAnimationFrame(scrollRafId.current);
+    scrollRafId.current = requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    return () => { if (scrollRafId.current) cancelAnimationFrame(scrollRafId.current); };
+  }, [currentPage]);
 
   const handleApplyFilters = () => {
     setCurrentPage(0);
@@ -275,11 +303,50 @@ const Shop = () => {
 
           ) : (
             <>
-              {/* Product Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map((product, i) => (
-                  <ProductCard key={product.id} product={product} index={i} />
-                ))}
+              {/* Product Grid — directional slide on page change */}
+              <div ref={gridRef} className="scroll-mt-28">
+                <AnimatePresence mode="wait" custom={pageDirection.current}>
+                  <motion.div
+                    key={currentPage}
+                    custom={pageDirection.current}
+                    variants={{
+                      initial: (dir) => ({
+                        opacity: 0,
+                        x: dir >= 0 ? 80 : -80,
+                        filter: 'blur(8px)',
+                      }),
+                      animate: {
+                        opacity: 1,
+                        x: 0,
+                        filter: 'blur(0px)',
+                        transition: {
+                          duration: 0.55,
+                          ease: [0.25, 0.46, 0.45, 0.94],
+                          delay: 0.35,
+                          opacity: { duration: 0.55, delay: 0.35 },
+                          filter: { duration: 0.55, delay: 0.35 },
+                        },
+                      },
+                      exit: (dir) => ({
+                        opacity: 0,
+                        x: dir >= 0 ? -80 : 80,
+                        filter: 'blur(8px)',
+                        transition: {
+                          duration: 0.35,
+                          ease: [0.55, 0, 1, 0.45],
+                        },
+                      }),
+                    }}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                  >
+                    {products.map((product, i) => (
+                      <ProductCard key={product.id} product={product} index={i} />
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
               </div>
 
               {/* Pagination */}
@@ -289,7 +356,7 @@ const Shop = () => {
                   className="mt-16 flex justify-center items-center gap-2"
                 >
                   <button
-                    onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                    onClick={() => { isPagination.current = true; setCurrentPage(prev => Math.max(0, prev - 1)); }}
                     disabled={currentPage === 0}
                     className="px-5 py-2.5 rounded-full text-sm font-semibold
                                text-slate-600 dark:text-white/50 border border-slate-200 dark:border-white/10
@@ -302,7 +369,7 @@ const Shop = () => {
                     {[...Array(totalPages)].map((_, index) => (
                       <button
                         key={index}
-                        onClick={() => setCurrentPage(index)}
+                        onClick={() => { isPagination.current = true; setCurrentPage(index); }}
                         className={`w-10 h-10 rounded-full text-sm font-bold transition-all duration-200
                           ${currentPage === index
                             ? 'bg-slate-900 dark:bg-white text-white dark:text-black shadow-lg'
@@ -314,7 +381,7 @@ const Shop = () => {
                   </div>
 
                   <button
-                    onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
+                    onClick={() => { isPagination.current = true; setCurrentPage(prev => Math.min(totalPages - 1, prev + 1)); }}
                     disabled={currentPage === totalPages - 1}
                     className="px-5 py-2.5 rounded-full text-sm font-semibold
                                text-slate-600 dark:text-white/50 border border-slate-200 dark:border-white/10
