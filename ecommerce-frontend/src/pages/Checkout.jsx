@@ -42,43 +42,55 @@ const Checkout = () => {
     customerName: '', email: '', address: '', city: '', zip: ''
   });
 
+  const [paymentMethod, setPaymentMethod] = useState('credit_card');
+  const [paymentDetails, setPaymentDetails] = useState({
+    cardNumber: '', expiry: '', cvc: '', nameOnCard: ''
+  });
+
   const handleInputChange = (e) => {
     setShipping({ ...shipping, [e.target.name]: e.target.value });
+  };
+
+  const handlePaymentChange = (e) => {
+    setPaymentDetails({ ...paymentDetails, [e.target.name]: e.target.value });
   };
 
   const handlePlaceOrder = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const formattedItems = cartItems.map(item => ({
-      productId: item.id,
-      productName: item.name,
-      quantity: item.quantity,
-      price: item.price
-    }));
+    // Simulate payment processing delay (1.5 seconds)
+    setTimeout(() => {
+      const formattedItems = cartItems.map(item => ({
+        productId: item.id,
+        productName: item.name,
+        quantity: item.quantity,
+        price: item.price
+      }));
 
-    const orderData = {
-      ...shipping,
-      totalAmount: getCartTotal(),
-      items: formattedItems
-    };
+      const orderData = {
+        ...shipping,
+        totalAmount: getCartTotal(),
+        items: formattedItems
+      };
 
-    fetch('http://localhost:8080/api/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData),
-    })
-      .then(response => {
-        if (response.ok) {
-          setIsSuccess(true);
-          clearCart();
-          // Give the success animation time to show, then redirect
-          setTimeout(() => navigate('/cart'), 2000);
-        } else {
-          alert("Failed to place order. Please try again.");
-          setIsSubmitting(false);
-        }
-      });
+      fetch('http://localhost:8080/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData),
+      })
+        .then(response => {
+          if (response.ok) {
+            setIsSuccess(true);
+            clearCart();
+            // Give the success animation time to show, then redirect
+            setTimeout(() => navigate('/cart'), 2000);
+          } else {
+            alert("Failed to place order. Please try again.");
+            setIsSubmitting(false);
+          }
+        });
+    }, 1500);
   };
 
   // ── Empty cart redirect state ──
@@ -162,6 +174,56 @@ const Checkout = () => {
             <div className="grid grid-cols-2 gap-4">
               <FormInput label="City"     required type="text" name="city" placeholder="New York"  onChange={handleInputChange} />
               <FormInput label="ZIP Code" required type="text" name="zip"  placeholder="10001"     onChange={handleInputChange} />
+            </div>
+
+            {/* Payment Section */}
+            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/10">
+              <h3 className="font-bold text-slate-700 dark:text-white/70 text-sm uppercase tracking-[0.15em] mb-4">Payment Method</h3>
+              <div className="grid grid-cols-3 gap-3 mb-6">
+                {[
+                  { id: 'credit_card', label: 'Credit Card', icon: '💳' },
+                  { id: 'paypal', label: 'PayPal', icon: '🅿️' },
+                  { id: 'apple_pay', label: 'Apple Pay', icon: '' }
+                ].map((method) => (
+                  <button
+                    key={method.id}
+                    type="button"
+                    onClick={() => setPaymentMethod(method.id)}
+                    className={`flex flex-col items-center justify-center gap-2 py-4 rounded-xl border transition-all duration-200
+                      ${paymentMethod === method.id 
+                        ? 'border-violet-500 bg-violet-50 dark:bg-violet-500/10 text-violet-700 dark:text-violet-300 shadow-sm'
+                        : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-white/40 hover:bg-slate-100 dark:hover:bg-white/10'
+                      }`}
+                  >
+                    <span className="text-2xl">{method.icon}</span>
+                    <span className="text-xs font-bold">{method.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Dynamic Payment Fields */}
+              {paymentMethod === 'credit_card' ? (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                  className="space-y-4"
+                >
+                  <FormInput label="Card Number" required type="text" name="cardNumber" placeholder="0000 0000 0000 0000" maxLength="19" onChange={handlePaymentChange} />
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormInput label="Expiry Date" required type="text" name="expiry" placeholder="MM/YY" maxLength="5" onChange={handlePaymentChange} />
+                    <FormInput label="CVC" required type="text" name="cvc" placeholder="123" maxLength="4" onChange={handlePaymentChange} />
+                  </div>
+                  <FormInput label="Name on Card" required type="text" name="nameOnCard" placeholder="John Doe" onChange={handlePaymentChange} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                  className="flex items-center justify-center py-6 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10"
+                >
+                  <p className="text-sm font-medium text-slate-500 dark:text-white/40 text-center">
+                    You will be redirected to {paymentMethod === 'paypal' ? 'PayPal' : 'Apple Pay'} to complete your purchase.
+                  </p>
+                </motion.div>
+              )}
             </div>
 
             {/* Submit Button */}

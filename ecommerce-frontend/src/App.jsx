@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
 import AdminDashboard from './pages/AdminDashboard';
 
 const AnimatedRoutes = () => {
@@ -17,7 +18,7 @@ const AnimatedRoutes = () => {
   const prevPath = useRef(location.pathname);
   const direction = useRef(1);
 
-  const pageOrder = { '/': 0, '/shop': 1, '/product': 1.5, '/cart': 2, '/admin': 3 };
+  const pageOrder = { '/': 0, '/shop': 1, '/product': 1.5, '/cart': 2, '/checkout': 2.5, '/admin': 3 };
   const getBaseRoute = (path) => path.startsWith('/product') ? '/product' : path;
 
   const currPathBase = getBaseRoute(location.pathname);
@@ -41,6 +42,7 @@ const AnimatedRoutes = () => {
     { path: '/shop', element: <Shop /> },
     { path: '/product/:id', element: <ProductDetails /> },
     { path: '/cart', element: <Cart /> },
+    { path: '/checkout', element: <Checkout /> },
     { path: '/admin', element: <AdminDashboard /> },
   ]);
 
