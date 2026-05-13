@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import DeviceSelector from "../components/DeviceSelector";
 
 // Shared gradient style matching the Hero page
 const TEXT_GRADIENT = {
@@ -18,6 +19,8 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [added, setAdded] = useState(false); // for the "Added!" feedback state
+  const [selectedDevices, setSelectedDevices] = useState([]);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     fetch(`http://localhost:8080/api/products/${id}`)
@@ -27,7 +30,14 @@ const ProductDetails = () => {
   }, [id]);
 
   const handleAddToCart = () => {
-    addToCart(product);
+    if (selectedDevices.length === 0) {
+      setError(true);
+      setTimeout(() => setError(false), 2000);
+      return;
+    }
+    selectedDevices.forEach(device => {
+      addToCart({ ...product, device });
+    });
     setAdded(true);
     // Reset button text after 2 seconds
     setTimeout(() => setAdded(false), 2000);
@@ -128,15 +138,10 @@ const ProductDetails = () => {
               {product.name}
             </h1>
 
-            {/* Device compatibility */}
-            {product.device && (
-              <div className="flex items-center gap-3 px-4 py-3 rounded-xl
-                              bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/8
-                              text-slate-500 dark:text-white/40 text-sm w-fit">
-                <span className="text-lg">📱</span>
-                <span>Compatible with <strong className="text-slate-800 dark:text-white/70">{product.device}</strong></span>
-              </div>
-            )}
+            {/* Device Selector */}
+            <div className="my-2">
+              <DeviceSelector onChange={setSelectedDevices} />
+            </div>
 
             {/* Price */}
             <div className="flex items-baseline gap-1 mt-2">
@@ -174,6 +179,8 @@ const ProductDetails = () => {
                           transition-all duration-300
                           ${added
                             ? 'bg-green-500 text-white shadow-[0_0_40px_rgba(34,197,94,0.4)]'
+                            : error
+                            ? 'bg-red-500 text-white shadow-[0_0_40px_rgba(239,68,68,0.4)] animate-shake'
                             : 'bg-slate-900 dark:bg-white text-white dark:text-black shadow-[0_0_40px_rgba(139,92,246,0.2)] hover:shadow-[0_0_60px_rgba(139,92,246,0.4)] hover:scale-[1.02]'
                           }`}
             >
@@ -183,6 +190,13 @@ const ProductDetails = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                   Added to Cart!
+                </>
+              ) : error ? (
+                <>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  Please Select a Device
                 </>
               ) : (
                 <>

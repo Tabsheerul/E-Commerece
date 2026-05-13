@@ -12,19 +12,20 @@ export const CartProvider = ({ children }) => {
   // Add item
   const addToCart = (product) => {
     setCartItems((prevItems) => {
-      const existingItem = prevItems.find(item => item.id === product.id);
+      const cartItemId = `${product.id}-${product.device}`;
+      const existingItem = prevItems.find(item => item.cartItemId === cartItemId);
       if (existingItem) {
         return prevItems.map(item => 
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.cartItemId === cartItemId ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-      return [...prevItems, { ...product, quantity: 1 }];
+      return [...prevItems, { ...product, quantity: 1, cartItemId }];
     });
   };
 
-  // NEW: Remove item entirely
-  const removeFromCart = (productId) => {
-    setCartItems((prevItems) => prevItems.filter(item => item.id !== productId));
+  // Remove item entirely
+  const removeFromCart = (cartItemId) => {
+    setCartItems((prevItems) => prevItems.filter(item => item.cartItemId !== cartItemId));
   };
 
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
@@ -41,9 +42,19 @@ export const CartProvider = ({ children }) => {
   // NEW: Calculate total price
   const cartTotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
+  // Update quantity (adding it since Cart.jsx calls it)
+  const updateQuantity = (cartItemId, newQuantity) => {
+    if (newQuantity < 1) return;
+    setCartItems((prevItems) => 
+      prevItems.map(item => 
+        item.cartItemId === cartItemId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
   return (
     // Make sure to pass the new functions down!
-    <CartContext.Provider value={{ cartItems, addToCart, getCartTotal, removeFromCart, totalItems, cartTotal }}>
+    <CartContext.Provider value={{ cartItems, addToCart, getCartTotal, removeFromCart, updateQuantity, totalItems, cartTotal }}>
       {children}
     </CartContext.Provider>
   );

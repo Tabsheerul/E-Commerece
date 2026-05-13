@@ -86,7 +86,7 @@ const Cart = () => {
           <AnimatePresence>
             {cartItems.map((item, index) => (
               <motion.div
-                key={item.id}
+                key={item.cartItemId}
                 variants={itemVariants}
                 initial="hidden" animate="visible" exit="exit"
                 transition={{ delay: index * 0.08 }}
@@ -115,7 +115,7 @@ const Cart = () => {
                   <div className="flex items-center bg-slate-100 dark:bg-white/5
                                   border border-slate-200 dark:border-white/10 rounded-full p-1">
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
                       className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold
                                  text-slate-500 dark:text-white/50
                                  hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
@@ -125,7 +125,7 @@ const Cart = () => {
                       {item.quantity}
                     </span>
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
                       className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold
                                  text-slate-500 dark:text-white/50
                                  hover:bg-slate-200 dark:hover:bg-white/10 transition-colors">
@@ -135,7 +135,7 @@ const Cart = () => {
 
                   {/* Remove */}
                   <button
-                    onClick={() => removeFromCart(item.id)}
+                    onClick={() => removeFromCart(item.cartItemId)}
                     className="text-xs font-semibold text-red-400 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors">
                     Remove
                   </button>
