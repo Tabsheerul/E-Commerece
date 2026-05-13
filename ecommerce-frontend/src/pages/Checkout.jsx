@@ -44,7 +44,7 @@ const Checkout = () => {
 
   const [paymentMethod, setPaymentMethod] = useState('credit_card');
   const [paymentDetails, setPaymentDetails] = useState({
-    cardNumber: '', expiry: '', cvc: '', nameOnCard: ''
+    cardNumber: '', expiry: '', cvc: '', nameOnCard: '', upiId: ''
   });
 
   const handleInputChange = (e) => {
@@ -182,8 +182,8 @@ const Checkout = () => {
               <div className="grid grid-cols-3 gap-3 mb-6">
                 {[
                   { id: 'credit_card', label: 'Credit Card', icon: '💳' },
-                  { id: 'paypal', label: 'PayPal', icon: '🅿️' },
-                  { id: 'apple_pay', label: 'Apple Pay', icon: '' }
+                  { id: 'bhim_upi', label: 'BHIM UPI', icon: '📱' },
+                  { id: 'paypal', label: 'PayPal', icon: '🅿️' }
                 ].map((method) => (
                   <button
                     key={method.id}
@@ -214,13 +214,25 @@ const Checkout = () => {
                   </div>
                   <FormInput label="Name on Card" required type="text" name="nameOnCard" placeholder="John Doe" onChange={handlePaymentChange} />
                 </motion.div>
+              ) : paymentMethod === 'bhim_upi' ? (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                  className="space-y-4"
+                >
+                  <FormInput label="UPI ID / VPA" required type="text" name="upiId" placeholder="username@upi" onChange={handlePaymentChange} />
+                  <div className="flex items-center justify-center py-4 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10">
+                    <p className="text-xs font-medium text-slate-500 dark:text-white/40 text-center">
+                      A payment request will be sent to your UPI app.
+                    </p>
+                  </div>
+                </motion.div>
               ) : (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                   className="flex items-center justify-center py-6 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10"
                 >
                   <p className="text-sm font-medium text-slate-500 dark:text-white/40 text-center">
-                    You will be redirected to {paymentMethod === 'paypal' ? 'PayPal' : 'Apple Pay'} to complete your purchase.
+                    You will be redirected to PayPal to complete your purchase.
                   </p>
                 </motion.div>
               )}
