@@ -29,9 +29,9 @@ const Footer = () => {
             <h4 className="text-slate-900 dark:text-white font-semibold mb-6 uppercase tracking-wider text-xs">Shop</h4>
             <ul className="space-y-4 text-sm">
               <li><Link to="/shop" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">All Products</Link></li>
-              <li><Link to="/shop" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Anime Collection</Link></li>
-              <li><Link to="/shop" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Sports Edition</Link></li>
-              <li><Link to="/shop" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Automotive</Link></li>
+              <li><Link to="/shop?category=Anime" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Anime Collection</Link></li>
+              <li><Link to="/shop?category=Sports" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Sports Edition</Link></li>
+              <li><Link to="/shop?category=Automotive" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Automotive</Link></li>
             </ul>
           </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
 
@@ -20,6 +21,7 @@ const slideUp = {
 };
 
 const Shop = () => {
+  const location = useLocation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,6 +44,17 @@ const Shop = () => {
 
   // Ref to the top of the product grid
   const gridRef = useRef(null);
+
+  // Sync category with URL parameters
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const categoryParam = searchParams.get('category');
+    if (categoryParam && CATEGORIES.includes(categoryParam)) {
+      setSelectedCategory(categoryParam);
+    } else if (!categoryParam) {
+      setSelectedCategory('All');
+    }
+  }, [location.search]);
 
   // Fetch products whenever filters or page change
   useEffect(() => {
