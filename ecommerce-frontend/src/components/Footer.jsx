@@ -50,9 +50,9 @@ const Footer = () => {
           <div>
             <h4 className="text-slate-900 dark:text-white font-semibold mb-6 uppercase tracking-wider text-xs">Legal</h4>
             <ul className="space-y-4 text-sm">
-              <li><Link to="#" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Privacy Policy</Link></li>
-              <li><Link to="#" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Terms of Service</Link></li>
-              <li><Link to="#" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Refund Policy</Link></li>
+              <li><Link to="/privacy" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Terms of Service</Link></li>
+              <li><Link to="/refund" className="text-slate-500 dark:text-zinc-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors">Refund Policy</Link></li>
             </ul>
           </div>
         </div>

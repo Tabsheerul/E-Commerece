@@ -12,13 +12,16 @@ import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import AdminDashboard from './pages/AdminDashboard';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsAndConditions from './pages/TermsAndConditions';
+import RefundPolicy from './pages/RefundPolicy';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
   const prevPath = useRef(location.pathname);
   const direction = useRef(1);
 
-  const pageOrder = { '/': 0, '/shop': 1, '/product': 1.5, '/cart': 2, '/checkout': 2.5, '/admin': 3 };
+  const pageOrder = { '/': 0, '/shop': 1, '/product': 1.5, '/cart': 2, '/checkout': 2.5, '/admin': 3, '/privacy': 4, '/terms': 4, '/refund': 4 };
   const getBaseRoute = (path) => path.startsWith('/product') ? '/product' : path;
 
   const currPathBase = getBaseRoute(location.pathname);
@@ -44,6 +47,9 @@ const AnimatedRoutes = () => {
     { path: '/cart', element: <Cart /> },
     { path: '/checkout', element: <Checkout /> },
     { path: '/admin', element: <AdminDashboard /> },
+    { path: '/privacy', element: <PrivacyPolicy /> },
+    { path: '/terms', element: <TermsAndConditions /> },
+    { path: '/refund', element: <RefundPolicy /> },
   ]);
 
   const variants = {
