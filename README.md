@@ -17,10 +17,12 @@
 
 ## ✨ Features
 
-- **Immersive UI/UX**: Cinematic video backgrounds and Framer Motion powered 3D parallax scrolling.
+- **Immersive UI/UX**: Cinematic video backgrounds, Framer Motion powered 3D parallax scrolling, and fluid directional page transitions mimicking native mobile apps.
 - **Modern Storefront**: Built with React 19, Tailwind CSS v4, and dynamic components.
-- **Smart Multi-Device Selection**: Custom cascading dropdowns allowing users to beautifully select up to 3 compatible devices per skin before adding to cart.
-- **Robust Backend API**: Powered by Spring Boot 4, featuring RESTful endpoints for products, users, and orders.
+- **Smart Multi-Device Selection**: Custom cascading dropdowns allowing users to beautifully select compatible devices per skin before adding to cart.
+- **Comprehensive Checkout**: Integrated support for multiple interactive payment methods including Credit Card, PayPal, Apple Pay, and BHIM UPI.
+- **Admin Dashboard**: A dedicated admin panel featuring real-time dynamic search and category filters for efficient product inventory management.
+- **Robust Backend API**: Powered by Spring Boot, featuring RESTful endpoints for products, users, and orders.
 - **Secure Data Management**: Fully integrated with MySQL using Spring Data JPA.
 - **Fully Responsive**: Optimized for desktop, tablet, and mobile devices.
 
