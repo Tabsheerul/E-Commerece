@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
+import CustomDropdown from '../components/CustomDropdown';
 
 // All the filter categories
 const CATEGORIES = ['All', 'Anime', 'Automotive', 'Superheroes', 'Sports'];
@@ -257,7 +258,7 @@ const Shop = () => {
           {/* Sort Bar */}
           <motion.div
             initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex justify-between items-center mb-8
+            className="relative z-50 flex justify-between items-center mb-8
                        bg-white dark:bg-zinc-900/60 backdrop-blur-xl
                        px-5 py-3.5 rounded-2xl
                        border border-slate-200 dark:border-white/5
@@ -269,17 +270,16 @@ const Shop = () => {
             </span>
             <div className="flex items-center gap-3">
               <span className="text-slate-400 dark:text-white/35 text-sm hidden sm:block">Sort by:</span>
-              <select
+              <CustomDropdown
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10
-                           text-slate-900 dark:text-white text-sm rounded-full px-4 py-1.5 outline-none cursor-pointer
-                           focus:ring-2 focus:ring-violet-500 transition-colors"
-              >
-                <option value="newest">Newest Arrivals</option>
-                <option value="price_asc">Price: Low to High</option>
-                <option value="price_desc">Price: High to Low</option>
-              </select>
+                onChange={setSortBy}
+                options={[
+                  { value: 'newest', label: 'Newest Arrivals' },
+                  { value: 'price_asc', label: 'Price: Low to High' },
+                  { value: 'price_desc', label: 'Price: High to Low' }
+                ]}
+                className="w-48 sm:w-52"
+              />
             </div>
           </motion.div>
 

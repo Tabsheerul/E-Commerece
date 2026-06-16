@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import CustomDropdown from '../components/CustomDropdown';
 
 /* ── Design tokens ─────────────────────────────────────────── */
 const TEXT_GRADIENT = {
@@ -226,22 +227,13 @@ const ProductModal = ({ editProduct, onClose, onSaved }) => {
           {/* Category + Price side by side */}
           <div className="grid grid-cols-2 gap-4">
             <Field label="Category" required>
-              <div className="relative">
-                <select
-                  value={form.category}
-                  onChange={e => set('category', e.target.value)}
-                  className={`${inputCls} appearance-none pr-10 cursor-pointer`}
-                >
-                  {CATEGORIES.map(c => (
-                    <option key={c} value={c} className="bg-white dark:bg-zinc-800">{c}</option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 dark:text-white/40">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </div>
+              <CustomDropdown
+                value={form.category}
+                onChange={val => set('category', val)}
+                options={CATEGORIES.map(c => ({ label: c, value: c }))}
+                buttonClassName={inputCls}
+                dropdownClassName="left-0 w-full"
+              />
             </Field>
 
             <Field label="Price (USD)" required>
@@ -500,7 +492,7 @@ const AdminDashboard = () => {
                    shadow-[0_10px_40px_-10px_rgba(0,0,0,0.06)] dark:shadow-2xl"
       >
         {/* Filters Bar */}
-        <div className="p-5 border-b border-slate-100 dark:border-white/5 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/50 dark:bg-white/[0.02]">
+        <div className="relative z-50 p-5 border-b border-slate-100 dark:border-white/5 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50/50 dark:bg-white/[0.02]">
           <div className="relative w-full sm:max-w-xs">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg className="h-4 w-4 text-slate-400 dark:text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -516,21 +508,16 @@ const AdminDashboard = () => {
             />
           </div>
           <div className="relative w-full sm:w-48">
-            <select
+            <CustomDropdown
               value={filterCategory}
-              onChange={e => setFilterCategory(e.target.value)}
-              className="w-full pl-4 pr-10 py-2.5 rounded-xl text-sm bg-white dark:bg-zinc-800/50 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 appearance-none transition-all duration-200 cursor-pointer"
-            >
-              <option value="All">All Categories</option>
-              {CATEGORIES.map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 dark:text-white/40">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
+              onChange={setFilterCategory}
+              options={[
+                { label: 'All Categories', value: 'All' },
+                ...CATEGORIES.map(c => ({ label: c, value: c }))
+              ]}
+              buttonClassName="w-full px-4 py-2.5 rounded-xl text-sm bg-white dark:bg-zinc-800/50 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all duration-200"
+              dropdownClassName="right-0 w-full min-w-[12rem]"
+            />
           </div>
         </div>
 
