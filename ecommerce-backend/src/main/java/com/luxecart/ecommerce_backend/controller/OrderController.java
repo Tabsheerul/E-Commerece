@@ -1,7 +1,7 @@
 package com.luxecart.ecommerce_backend.controller;
 
 import com.luxecart.ecommerce_backend.entity.Order;
-import com.luxecart.ecommerce_backend.repository.OrderRepository;
+import com.luxecart.ecommerce_backend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     @Autowired
-    private OrderRepository orderRepository;
+    private OrderService orderService;
 
     @PostMapping
     public Order placeOrder(@RequestBody Order order) {
-        // Save the order AND all its items to MySQL instantly
-        return orderRepository.save(order);
+        return orderService.placeOrder(order);
     }
 }
