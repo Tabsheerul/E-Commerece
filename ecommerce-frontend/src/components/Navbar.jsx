@@ -2,7 +2,9 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
+import { AuthContext } from '../context/AuthContext';
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
 
 const TEXT_GRADIENT = {
   backgroundImage: 'linear-gradient(135deg,#a78bfa 0%,#f472b6 55%,#fb923c 100%)',
@@ -14,6 +16,7 @@ const TEXT_GRADIENT = {
 const Navbar = () => {
   const { totalItems } = useCart();
   const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useContext(AuthContext);
 
   return (
     <nav className="fixed w-full z-50 top-0 transition-colors duration-500 backdrop-blur-xl bg-white/80 dark:bg-[#131318]/80 border-b border-gray-200 dark:border-white/5">
@@ -74,10 +77,19 @@ const Navbar = () => {
               )}
             </Link>
 
-            {/* Sign In */}
-            <button className="hidden md:block bg-black dark:bg-white text-white dark:text-black px-6 py-2 rounded-full text-sm font-semibold transition-transform hover:scale-105 active:scale-95">
-              Sign In
-            </button>
+            {/* Sign In / User Info */}
+            {user ? (
+              <div className="hidden md:flex items-center space-x-4">
+                <span className="text-sm font-medium dark:text-white">Hello, {user.username}</span>
+                <button onClick={logout} className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full text-sm font-semibold transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link to="/login" className="hidden md:block bg-black dark:bg-white text-white dark:text-black px-6 py-2 rounded-full text-sm font-semibold transition-transform hover:scale-105 active:scale-95">
+                Sign In
+              </Link>
+            )}
 
           </div>
         </div>

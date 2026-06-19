@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
 
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -15,6 +16,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
 import RefundPolicy from './pages/RefundPolicy';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -50,6 +53,8 @@ const AnimatedRoutes = () => {
     { path: '/privacy', element: <PrivacyPolicy /> },
     { path: '/terms', element: <TermsAndConditions /> },
     { path: '/refund', element: <RefundPolicy /> },
+    { path: '/login', element: <Login /> },
+    { path: '/register', element: <Register /> },
   ]);
 
   const variants = {
@@ -78,18 +83,20 @@ import Footer from './components/Footer';
 // Inside App.jsx
 const App = () => {
   return (
-    <ThemeProvider>
-      <CartProvider>
-        {/* Updated root background to #131318 */}
-        <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-[#131318] text-gray-900 dark:text-gray-100 transition-colors duration-500 overflow-hidden">
-          <Navbar />
-          <main className="flex-grow w-full">
-            <AnimatedRoutes />
-          </main>
-          <Footer />
-        </div>
-      </CartProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <CartProvider>
+          {/* Updated root background to #131318 */}
+          <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-[#131318] text-gray-900 dark:text-gray-100 transition-colors duration-500 overflow-hidden">
+            <Navbar />
+            <main className="flex-grow w-full">
+              <AnimatedRoutes />
+            </main>
+            <Footer />
+          </div>
+        </CartProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 };
 
