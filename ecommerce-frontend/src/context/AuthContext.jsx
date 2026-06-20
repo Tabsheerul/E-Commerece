@@ -41,7 +41,13 @@ export const AuthProvider = ({ children }) => {
                 return { success: true };
             } else {
                 const errorData = await response.text();
-                return { success: false, message: errorData || 'Login failed' };
+                let errorMessage = errorData || 'Login failed';
+                try {
+                    const parsed = JSON.parse(errorData);
+                    if (parsed.message) errorMessage = parsed.message;
+                    else if (parsed.error) errorMessage = parsed.error;
+                } catch (e) {}
+                return { success: false, message: errorMessage };
             }
         } catch (error) {
             return { success: false, message: 'Network error occurred' };
@@ -65,7 +71,13 @@ export const AuthProvider = ({ children }) => {
                 return { success: true };
             } else {
                 const errorData = await response.text();
-                return { success: false, message: errorData || 'Registration failed' };
+                let errorMessage = errorData || 'Registration failed';
+                try {
+                    const parsed = JSON.parse(errorData);
+                    if (parsed.message) errorMessage = parsed.message;
+                    else if (parsed.error) errorMessage = parsed.error;
+                } catch (e) {}
+                return { success: false, message: errorMessage };
             }
         } catch (error) {
             return { success: false, message: 'Network error occurred' };

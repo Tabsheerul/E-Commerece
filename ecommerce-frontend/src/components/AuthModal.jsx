@@ -37,6 +37,33 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        // Form Validation
+        if (mode === 'register') {
+            if (name.trim().length < 2) {
+                setError('Please enter a valid full name.');
+                return;
+            }
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setError('Please enter a valid email address (e.g., user@example.com).');
+            return;
+        }
+
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters long.');
+            return;
+        }
+
+        if (mode === 'register' && accountType === 'admin') {
+            if (adminCode.trim() === '') {
+                setError('Admin Secret Code is required for admin accounts.');
+                return;
+            }
+        }
+
         setIsLoading(true);
 
         try {

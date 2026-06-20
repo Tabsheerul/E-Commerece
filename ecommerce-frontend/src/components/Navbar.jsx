@@ -15,10 +15,14 @@ const TEXT_GRADIENT = {
 };
 
 const Navbar = () => {
-  const { totalItems } = useCart();
+  const { totalItems, clearCart } = useCart();
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useContext(AuthContext);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <>
@@ -84,7 +88,7 @@ const Navbar = () => {
             {user ? (
               <div className="hidden md:flex items-center space-x-4">
                 <span className="text-sm font-medium dark:text-white">Hello, {user.username}</span>
-                <button onClick={logout} className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full text-sm font-semibold transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+                <button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full text-sm font-semibold transition-transform hover:scale-105 active:scale-95 cursor-pointer">
                   Logout
                 </button>
               </div>
