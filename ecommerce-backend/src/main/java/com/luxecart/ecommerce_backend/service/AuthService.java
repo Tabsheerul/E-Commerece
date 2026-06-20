@@ -33,11 +33,16 @@ public class AuthService {
             throw new IllegalArgumentException("Email is already taken!");
         }
 
+        User.Role role = User.Role.USER;
+        if (request.getAdminCode() != null && request.getAdminCode().equals("SECRET_ADMIN_123")) {
+            role = User.Role.ADMIN;
+        }
+
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(User.Role.USER) // default role
+                .role(role)
                 .build();
 
         userRepository.save(user);

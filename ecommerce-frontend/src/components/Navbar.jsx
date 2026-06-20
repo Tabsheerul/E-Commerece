@@ -21,8 +21,9 @@ const Navbar = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   return (
-    <nav className="fixed w-full z-50 top-0 transition-colors duration-500 backdrop-blur-xl bg-white/80 dark:bg-[#131318]/80 border-b border-gray-200 dark:border-white/5">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <>
+      <nav className="fixed w-full z-50 top-0 transition-colors duration-500 backdrop-blur-xl bg-white/80 dark:bg-[#131318]/80 border-b border-gray-200 dark:border-white/5">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="flex justify-between items-center h-20">
 
           {/* ── Logo (Monochrome) ── */}
@@ -96,8 +97,9 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </nav>
+    <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+    </>
   );
 };
 

@@ -4,9 +4,11 @@ import { AuthContext } from '../context/AuthContext';
 
 const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
     const [mode, setMode] = useState(initialMode); // 'login' or 'register'
+    const [accountType, setAccountType] = useState('user'); // 'user' or 'admin'
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [adminCode, setAdminCode] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -16,11 +18,20 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
     useEffect(() => {
         if (isOpen) {
             setMode(initialMode);
+            setAccountType('user');
             setError('');
             setName('');
             setEmail('');
             setPassword('');
+            setAdminCode('');
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
         }
+
+        return () => {
+            document.body.style.overflow = '';
+        };
     }, [isOpen, initialMode]);
 
     const handleSubmit = async (e) => {
@@ -37,7 +48,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                     setError(result.message || 'Login failed');
                 }
             } else {
-                const result = await register(name, email, password);
+                const result = await register(name, email, password, accountType === 'admin' ? adminCode : undefined);
                 if (result.success) {
                     setMode('login');
                     setError('');
@@ -97,32 +108,55 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                                 <h2 className="text-3xl font-black text-center text-gray-900 dark:text-white mb-2 tracking-tight">
                                     {mode === 'login' ? 'Welcome Back' : 'Create Account'}
                                 </h2>
-                                <p className="text-center text-gray-500 dark:text-gray-400 text-sm mb-8">
+                                <p className="text-center text-gray-500 dark:text-gray-400 text-sm mb-6">
                                     {mode === 'login' 
                                         ? 'Enter your details to access your account.' 
                                         : 'Join us to get the best premium skins.'}
                                 </p>
 
-                                <form onSubmit={handleSubmit} className="space-y-5">
-                                    {error && (
-                                        <motion.div 
-                                            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                                            className="p-3 text-sm text-red-600 bg-red-50 dark:bg-red-500/10 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-500/20 text-center"
-                                        >
-                                            {error}
-                                        </motion.div>
-                                    )}
+                                <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-lg mb-6">
+                                    <button 
+                                        type="button"
+                                        onClick={() => setAccountType('user')}
+                                        className={`flex-1 text-sm font-semibold py-2 rounded-md transition-all ${accountType === 'user' ? 'bg-white dark:bg-[#131318] shadow-sm text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                                    >
+                                        Customer
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        onClick={() => setAccountType('admin')}
+                                        className={`flex-1 text-sm font-semibold py-2 rounded-md transition-all ${accountType === 'admin' ? 'bg-white dark:bg-[#131318] shadow-sm text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                                    >
+                                        Admin
+                                    </button>
+                                </div>
 
-                                    <AnimatePresence mode="popLayout">
+                                <motion.form layout onSubmit={handleSubmit} className="flex flex-col gap-5">
+                                    <AnimatePresence>
+                                        {error && (
+                                            <motion.div 
+                                                layout
+                                                initial={{ opacity: 0, y: -10, height: 0 }} 
+                                                animate={{ opacity: 1, y: 0, height: 'auto' }}
+                                                exit={{ opacity: 0, y: -10, height: 0 }}
+                                                className="p-3 text-sm text-red-600 bg-red-50 dark:bg-red-500/10 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-500/20 text-center"
+                                            >
+                                                {error}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+
+                                    <AnimatePresence>
                                         {mode === 'register' && (
                                             <motion.div
+                                                layout
                                                 key="register-name-field"
                                                 initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
-                                                animate={{ opacity: 1, height: 'auto', overflow: 'visible' }}
+                                                animate={{ opacity: 1, height: 'auto', transitionEnd: { overflow: 'visible' } }}
                                                 exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
-                                                transition={{ duration: 0.2 }}
+                                                transition={{ duration: 0.3, ease: 'easeInOut' }}
                                             >
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Full Name</label>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 mt-1">Full Name</label>
                                                 <input
                                                     type="text"
                                                     required
@@ -135,7 +169,30 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                                         )}
                                     </AnimatePresence>
 
-                                    <div>
+                                    <AnimatePresence>
+                                        {mode === 'register' && accountType === 'admin' && (
+                                            <motion.div
+                                                layout
+                                                key="register-admin-code"
+                                                initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
+                                                animate={{ opacity: 1, height: 'auto', transitionEnd: { overflow: 'visible' } }}
+                                                exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
+                                                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                            >
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 mt-1">Admin Secret Code</label>
+                                                <input
+                                                    type="password"
+                                                    required
+                                                    value={adminCode}
+                                                    onChange={(e) => setAdminCode(e.target.value)}
+                                                    className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-white/5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
+                                                    placeholder="SECRET_ADMIN_123"
+                                                />
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+
+                                    <motion.div layout>
                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email Address</label>
                                         <input
                                             type="email"
@@ -145,9 +202,9 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                                             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-white/5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
                                             placeholder="you@example.com"
                                         />
-                                    </div>
+                                    </motion.div>
 
-                                    <div>
+                                    <motion.div layout>
                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Password</label>
                                         <input
                                             type="password"
@@ -157,18 +214,19 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                                             className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-white/5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
                                             placeholder="••••••••"
                                         />
-                                    </div>
+                                    </motion.div>
 
                                     <motion.button
+                                        layout
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         disabled={isLoading}
                                         type="submit"
-                                        className="w-full py-3.5 rounded-xl text-white font-bold tracking-wide shadow-lg shadow-violet-500/30 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 dark:focus:ring-offset-[#131318]"
+                                        className="w-full py-3.5 rounded-xl text-white font-bold tracking-wide shadow-lg shadow-violet-500/30 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 dark:focus:ring-offset-[#131318] mt-2"
                                     >
                                         {isLoading ? 'Processing...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
                                     </motion.button>
-                                </form>
+                                </motion.form>
 
                                 <div className="mt-6 text-center">
                                     <p className="text-sm text-gray-600 dark:text-gray-400">

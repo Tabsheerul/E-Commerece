@@ -18,6 +18,8 @@
 ## ✨ Features
 
 - **Immersive UI/UX**: Cinematic video backgrounds, Framer Motion powered 3D parallax scrolling, and fluid directional page transitions mimicking native mobile apps.
+- **Glassmorphism Authentication**: An interactive, beautifully animated authentication modal using Framer Motion layout transitions and advanced backdrop blurring for a premium login/registration experience.
+- **Dual Role Management (JWT)**: Secure JSON Web Token authentication system built-in. Features distinct Customer and Admin roles, including a secure "Secret Code" registration mechanism (`SECRET_ADMIN_123`) to seamlessly promote administrators.
 - **Modern Storefront**: Built with React 19, Tailwind CSS v4, and dynamic components.
 - **Smart Multi-Device Selection**: Custom cascading dropdowns allowing users to beautifully select compatible devices per skin before adding to cart.
 - **Comprehensive Checkout**: Integrated support for multiple interactive payment methods including Credit Card, PayPal, Apple Pay, and BHIM UPI.
