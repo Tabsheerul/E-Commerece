@@ -100,7 +100,7 @@ const Cart = () => {
                 {/* Product image */}
                 <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden flex-shrink-0
                                 bg-slate-100 dark:bg-zinc-800">
-                  <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 </div>
 
                 {/* Product details */}

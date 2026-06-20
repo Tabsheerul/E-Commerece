@@ -1,11 +1,12 @@
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
 import { AuthContext } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { useContext, useState } from 'react';
 import AuthModal from './AuthModal';
+import { AnimatePresence } from 'framer-motion';
 
 const TEXT_GRADIENT = {
   backgroundImage: 'linear-gradient(135deg,#a78bfa 0%,#f472b6 55%,#fb923c 100%)',
@@ -19,9 +20,21 @@ const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useContext(AuthContext);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogout = () => {
+    setShowLogoutConfirm(false);
     logout();
+    navigate('/');
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutConfirm(false);
   };
 
   return (
@@ -88,7 +101,7 @@ const Navbar = () => {
             {user ? (
               <div className="hidden md:flex items-center space-x-4">
                 <span className="text-sm font-medium dark:text-white">Hello, {user.username}</span>
-                <button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full text-sm font-semibold transition-transform hover:scale-105 active:scale-95 cursor-pointer">
+                <button onClick={handleLogoutClick} className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full text-sm font-semibold transition-transform hover:scale-105 active:scale-95 cursor-pointer">
                   Logout
                 </button>
               </div>
@@ -102,6 +115,57 @@ const Navbar = () => {
         </div>
       </div>
     </nav>
+
+    {/* Logout Confirmation Modal */}
+    <AnimatePresence>
+      {showLogoutConfirm && (
+        <>
+          <motion.div
+            key="logout-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={cancelLogout}
+            className="fixed inset-0 bg-black/50 backdrop-blur-md z-[100]"
+          />
+          <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-[101] p-4">
+            <motion.div
+              key="logout-modal"
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="w-full max-w-sm bg-white dark:bg-[#131318] rounded-[2rem] shadow-2xl pointer-events-auto overflow-hidden border border-slate-200 dark:border-white/10 p-8 text-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-500/10 mx-auto mb-6 flex items-center justify-center text-red-500">
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Log Out?</h3>
+              <p className="text-slate-500 dark:text-white/40 mb-8 text-sm leading-relaxed">
+                Are you sure you want to log out? Your cart will be securely saved for your next visit.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={cancelLogout}
+                  className="flex-1 py-3 rounded-full font-bold text-slate-600 dark:text-white/70 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmLogout}
+                  className="flex-1 py-3 rounded-full font-bold text-white bg-red-500 hover:bg-red-600 shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] transition-all"
+                >
+                  Log Out
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </>
+      )}
+    </AnimatePresence>
+
     <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </>
   );
