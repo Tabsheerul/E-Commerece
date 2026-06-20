@@ -4,7 +4,8 @@ import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
 import { AuthContext } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
+import AuthModal from './AuthModal';
 
 const TEXT_GRADIENT = {
   backgroundImage: 'linear-gradient(135deg,#a78bfa 0%,#f472b6 55%,#fb923c 100%)',
@@ -17,6 +18,7 @@ const Navbar = () => {
   const { totalItems } = useCart();
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useContext(AuthContext);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   return (
     <nav className="fixed w-full z-50 top-0 transition-colors duration-500 backdrop-blur-xl bg-white/80 dark:bg-[#131318]/80 border-b border-gray-200 dark:border-white/5">
@@ -86,14 +88,15 @@ const Navbar = () => {
                 </button>
               </div>
             ) : (
-              <Link to="/login" className="hidden md:block bg-black dark:bg-white text-white dark:text-black px-6 py-2 rounded-full text-sm font-semibold transition-transform hover:scale-105 active:scale-95">
+              <button onClick={() => setIsAuthOpen(true)} className="hidden md:block bg-black dark:bg-white text-white dark:text-black px-6 py-2 rounded-full text-sm font-semibold transition-transform hover:scale-105 active:scale-95 cursor-pointer">
                 Sign In
-              </Link>
+              </button>
             )}
 
           </div>
         </div>
       </div>
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </nav>
   );
 };

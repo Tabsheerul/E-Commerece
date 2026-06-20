@@ -3,7 +3,6 @@ package com.luxecart.ecommerce_backend.controller;
 import com.luxecart.ecommerce_backend.dto.AuthRequest;
 import com.luxecart.ecommerce_backend.dto.AuthResponse;
 import com.luxecart.ecommerce_backend.dto.RegisterRequest;
-import com.luxecart.ecommerce_backend.entity.User;
 import com.luxecart.ecommerce_backend.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
