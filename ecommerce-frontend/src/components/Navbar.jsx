@@ -41,7 +41,7 @@ const Navbar = () => {
     <>
       <nav className="fixed w-full z-50 top-0 transition-colors duration-500 backdrop-blur-xl bg-white/80 dark:bg-[#131318]/80 border-b border-gray-200 dark:border-white/5">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-20 relative">
 
           {/* ── Logo (Monochrome) ── */}
           <div className="flex-shrink-0 flex items-center">
@@ -51,8 +51,8 @@ const Navbar = () => {
           </div>
 
           {/* ── Center Links (Monochrome Active State) ── */}
-          <div className="hidden md:flex space-x-10">
-            {['Home', 'Shop', 'Admin'].map((item) => (
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 space-x-10">
+            {['Home', 'Shop', user && user.role === 'ADMIN' ? 'Admin' : null].filter(Boolean).map((item) => (
               <NavLink
                 key={item}
                 to={item === 'Home' ? '/' : `/${item.toLowerCase()}`}
@@ -99,10 +99,23 @@ const Navbar = () => {
 
             {/* Sign In / User Info */}
             {user ? (
-              <div className="hidden md:flex items-center space-x-4">
-                <span className="text-sm font-medium dark:text-white">Hello, {user.username}</span>
-                <button onClick={handleLogoutClick} className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full text-sm font-semibold transition-transform hover:scale-105 active:scale-95 cursor-pointer">
-                  Logout
+              <div className="hidden md:flex items-center gap-4 pl-4 ml-2 border-l border-slate-200 dark:border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-500 to-fuchsia-500 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-violet-500/20">
+                    {user.username ? user.username.charAt(0).toUpperCase() : 'U'}
+                  </div>
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                    {user.username}
+                  </span>
+                </div>
+                <button 
+                  onClick={handleLogoutClick} 
+                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-full transition-all duration-200 cursor-pointer"
+                  title="Logout"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
                 </button>
               </div>
             ) : (

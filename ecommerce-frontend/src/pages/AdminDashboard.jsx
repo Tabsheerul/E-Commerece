@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CustomDropdown from '../components/CustomDropdown';
+import { AuthContext } from '../context/AuthContext';
 
 /* ── Design tokens ─────────────────────────────────────────── */
 const TEXT_GRADIENT = {
@@ -342,6 +343,7 @@ const ProductModal = ({ editProduct, onClose, onSaved }) => {
 /*  Main AdminDashboard                                         */
 /* ════════════════════════════════════════════════════════════ */
 const AdminDashboard = () => {
+  const { user } = useContext(AuthContext);
   const [products, setProducts]     = useState([]);
   const [loading, setLoading]       = useState(true);
   const [showModal, setShowModal]   = useState(false);
@@ -417,6 +419,32 @@ const AdminDashboard = () => {
       icon: '💰',
     },
   ];
+
+  if (!user || user.role !== 'ADMIN') {
+    return (
+      <div className="pt-32 pb-24 px-6 lg:px-12 max-w-7xl mx-auto min-h-screen flex items-center justify-center
+                      bg-slate-50 dark:bg-[#0a0a0f] transition-colors duration-500">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white dark:bg-zinc-900/60 backdrop-blur-xl border border-slate-200 dark:border-white/5 rounded-[2rem] p-12 text-center shadow-2xl max-w-lg w-full"
+        >
+          <div className="w-24 h-24 rounded-full bg-red-100 dark:bg-red-500/10 mx-auto mb-8 flex items-center justify-center text-red-500">
+            <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Access Denied</h2>
+          <p className="text-slate-500 dark:text-white/40 mb-8 text-base leading-relaxed">
+            Oops! It looks like you don't have the necessary administrative privileges to view this page. If you believe this is a mistake, please contact support.
+          </p>
+          <a href="/" className="inline-block w-full py-4 rounded-full font-bold text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-slate-200 transition-colors">
+            Return Home
+          </a>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-32 pb-24 px-6 lg:px-12 max-w-7xl mx-auto min-h-screen
