@@ -104,9 +104,6 @@ const Navbar = () => {
                   <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-500 to-fuchsia-500 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-violet-500/20">
                     {user.username ? user.username.charAt(0).toUpperCase() : 'U'}
                   </div>
-                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-                    {user.username}
-                  </span>
                 </div>
                 <button 
                   onClick={handleLogoutClick} 
