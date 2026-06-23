@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
 import { AuthContext } from '../context/AuthContext';
+import { useWishlist } from '../context/WishlistContext';
 import { motion } from 'framer-motion';
 import { useContext, useState } from 'react';
 import AuthModal from './AuthModal';
@@ -19,6 +20,7 @@ const Navbar = () => {
   const { totalItems, clearCart } = useCart();
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useContext(AuthContext);
+  const { wishlistItems } = useWishlist();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
@@ -84,6 +86,18 @@ const Navbar = () => {
                 </motion.svg>
               )}
             </button>
+
+            {/* Wishlist Icon */}
+            <Link to="/wishlist" className="text-zinc-500 hover:text-pink-500 dark:text-zinc-400 dark:hover:text-pink-400 transition-colors relative p-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              {wishlistItems?.length > 0 && (
+                <span className="absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center shadow-sm">
+                  {wishlistItems.length}
+                </span>
+              )}
+            </Link>
 
             {/* Cart Icon */}
             <Link to="/cart" className="text-zinc-500 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors relative p-2">

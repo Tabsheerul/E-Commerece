@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
+import { WishlistProvider } from './context/WishlistContext';
 
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -18,13 +19,14 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import RefundPolicy from './pages/RefundPolicy';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Wishlist from './pages/Wishlist';
 
 const AnimatedRoutes = () => {
   const location = useLocation();
   const prevPath = useRef(location.pathname);
   const direction = useRef(1);
 
-  const pageOrder = { '/': 0, '/shop': 1, '/product': 1.5, '/cart': 2, '/checkout': 2.5, '/admin': 3, '/privacy': 4, '/terms': 4, '/refund': 4 };
+  const pageOrder = { '/': 0, '/shop': 1, '/product': 1.5, '/wishlist': 1.8, '/cart': 2, '/checkout': 2.5, '/admin': 3, '/privacy': 4, '/terms': 4, '/refund': 4 };
   const getBaseRoute = (path) => path.startsWith('/product') ? '/product' : path;
 
   const currPathBase = getBaseRoute(location.pathname);
@@ -55,6 +57,7 @@ const AnimatedRoutes = () => {
     { path: '/refund', element: <RefundPolicy /> },
     { path: '/login', element: <Login /> },
     { path: '/register', element: <Register /> },
+    { path: '/wishlist', element: <Wishlist /> },
   ]);
 
   const variants = {
@@ -84,18 +87,20 @@ import Footer from './components/Footer';
 const App = () => {
   return (
     <AuthProvider>
-      <ThemeProvider>
-        <CartProvider>
-          {/* Updated root background to #131318 */}
-          <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-[#131318] text-gray-900 dark:text-gray-100 transition-colors duration-500 overflow-hidden">
-            <Navbar />
-            <main className="flex-grow w-full">
-              <AnimatedRoutes />
-            </main>
-            <Footer />
-          </div>
-        </CartProvider>
-      </ThemeProvider>
+      <WishlistProvider>
+        <ThemeProvider>
+          <CartProvider>
+            {/* Updated root background to #131318 */}
+            <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-[#131318] text-gray-900 dark:text-gray-100 transition-colors duration-500 overflow-hidden">
+              <Navbar />
+              <main className="flex-grow w-full">
+                <AnimatedRoutes />
+              </main>
+              <Footer />
+            </div>
+          </CartProvider>
+        </ThemeProvider>
+      </WishlistProvider>
     </AuthProvider>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useWishlist } from '../context/WishlistContext';
 
 // Reusable gradient style (matches Hero page)
 const TEXT_GRADIENT = {
@@ -11,6 +12,15 @@ const TEXT_GRADIENT = {
 };
 
 const ProductCard = ({ product, index = 0 }) => {
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  const isWishlisted = isInWishlist(product.id);
+
+  const handleWishlistClick = (e) => {
+    e.preventDefault(); // Prevent navigating to product details
+    e.stopPropagation();
+    toggleWishlist(product);
+  };
+
   return (
     // Slide-up entrance animation staggered by index
     <motion.div
@@ -43,6 +53,20 @@ const ProductCard = ({ product, index = 0 }) => {
               NEW
             </div>
           )}
+
+          {/* Wishlist Button */}
+          <button
+            onClick={handleWishlistClick}
+            className={`absolute top-4 right-4 z-10 p-2.5 rounded-full backdrop-blur-md transition-all duration-300
+              ${isWishlisted 
+                ? 'bg-pink-500/90 text-white shadow-lg shadow-pink-500/30 scale-110' 
+                : 'bg-white/50 dark:bg-black/40 text-slate-700 dark:text-white/70 hover:bg-white dark:hover:bg-black hover:text-pink-500 hover:scale-110'
+              }`}
+          >
+            <svg className="w-4 h-4" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </button>
 
           {/* Quick-view button appears on hover */}
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 translate-y-3 opacity-0
