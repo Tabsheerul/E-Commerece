@@ -57,7 +57,7 @@ public class AuthService {
         if (authentication.isAuthenticated()) {
             String token = jwtUtil.generateToken(request.getEmail());
             User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-            return new AuthResponse(token, user.getName(), user.getRole().name());
+            return new AuthResponse(token, user.getName(), user.getEmail(), user.getRole().name());
         } else {
             throw new IllegalArgumentException("Invalid credentials");
         }

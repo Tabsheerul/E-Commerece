@@ -5,7 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import { AuthContext } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
 import { motion } from 'framer-motion';
-import { useContext, useState } from 'react';
+import { useContext, useState, useRef, useEffect } from 'react';
 import AuthModal from './AuthModal';
 import { AnimatePresence } from 'framer-motion';
 
@@ -23,7 +23,20 @@ const Navbar = () => {
   const { wishlistItems } = useWishlist();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef(null);
   const navigate = useNavigate();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogoutClick = () => {
     setShowLogoutConfirm(true);
@@ -54,7 +67,7 @@ const Navbar = () => {
 
           {/* ── Center Links (Monochrome Active State) ── */}
           <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 space-x-10">
-            {['Home', 'Shop', user && user.role === 'ADMIN' ? 'Admin' : null].filter(Boolean).map((item) => (
+            {['Home', 'Shop'].map((item) => (
               <NavLink
                 key={item}
                 to={item === 'Home' ? '/' : `/${item.toLowerCase()}`}
@@ -113,21 +126,74 @@ const Navbar = () => {
 
             {/* Sign In / User Info */}
             {user ? (
-              <div className="hidden md:flex items-center gap-4 pl-4 ml-2 border-l border-slate-200 dark:border-white/10">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-500 to-fuchsia-500 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-violet-500/20">
+              <div className="hidden md:flex relative items-center pl-4 ml-2 border-l border-slate-200 dark:border-white/10" ref={profileRef}>
+                <button
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center gap-2 focus:outline-none"
+                >
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-500 to-fuchsia-500 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-violet-500/20 hover:scale-105 transition-transform">
                     {user.username ? user.username.charAt(0).toUpperCase() : 'U'}
                   </div>
-                </div>
-                <button 
-                  onClick={handleLogoutClick} 
-                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-full transition-all duration-200 cursor-pointer"
-                  title="Logout"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  <svg className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
+
+                <AnimatePresence>
+                  {isProfileOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 top-full mt-3 w-56 bg-white dark:bg-[#18181f] rounded-2xl shadow-xl border border-slate-100 dark:border-white/10 overflow-hidden z-50"
+                    >
+                      {/* User Info Header */}
+                      <div className="p-4 border-b border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/5">
+                        <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{user.username}</p>
+                        <p className="text-xs text-slate-500 dark:text-white/40 truncate">{user.email || 'user@skinvault.com'}</p>
+                      </div>
+
+                      {/* Dropdown Links */}
+                      <div className="p-2 flex flex-col gap-1">
+                        <Link to="#" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-violet-600 dark:hover:text-violet-400 rounded-lg transition-colors">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                          </svg>
+                          My Orders
+                        </Link>
+                        <Link to="#" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-violet-600 dark:hover:text-violet-400 rounded-lg transition-colors">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          Account Settings
+                        </Link>
+                        {user.role === 'ADMIN' && (
+                          <Link to="/admin" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-violet-600 dark:hover:text-violet-400 rounded-lg transition-colors">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            Admin Dashboard
+                          </Link>
+                        )}
+                      </div>
+
+                      {/* Logout Action */}
+                      <div className="p-2 border-t border-slate-100 dark:border-white/5">
+                        <button
+                          onClick={() => { setIsProfileOpen(false); handleLogoutClick(); }}
+                          className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                          </svg>
+                          Log Out
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ) : (
               <button onClick={() => setIsAuthOpen(true)} className="hidden md:block bg-black dark:bg-white text-white dark:text-black px-6 py-2 rounded-full text-sm font-semibold transition-transform hover:scale-105 active:scale-95 cursor-pointer">
