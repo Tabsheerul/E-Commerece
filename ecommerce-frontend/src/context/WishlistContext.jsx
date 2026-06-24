@@ -14,7 +14,16 @@ export const WishlistProvider = ({ children }) => {
         if (token && user) {
             fetchWishlist();
         } else {
-            setWishlistItems([]);
+            const savedWishlist = localStorage.getItem('wishlist_guest');
+            if (savedWishlist) {
+                try {
+                    setWishlistItems(JSON.parse(savedWishlist));
+                } catch (e) {
+                    setWishlistItems([]);
+                }
+            } else {
+                setWishlistItems([]);
+            }
         }
     }, [token, user]);
 
@@ -38,45 +47,56 @@ export const WishlistProvider = ({ children }) => {
     };
 
     const addToWishlist = async (product) => {
-        if (!token) return; // Should prompt login in real app
-        
-        // Optimistic update
-        setWishlistItems(prev => [...prev, product]);
-        
-        try {
-            const response = await fetch(`http://localhost:8080/api/wishlist/${product.id}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (!response.ok) {
-                // Revert if failed
-                fetchWishlist();
+        // Optimistic update for both guest and authenticated users
+        setWishlistItems(prev => {
+            const newItems = [...prev, product];
+            if (!token) {
+                localStorage.setItem('wishlist_guest', JSON.stringify(newItems));
             }
-        } catch (error) {
-            fetchWishlist();
+            return newItems;
+        });
+        
+        if (token) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/wishlist/${product.id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (!response.ok) {
+                    fetchWishlist(); // Revert if failed
+                }
+            } catch (error) {
+                fetchWishlist(); // Revert on error
+            }
         }
     };
 
     const removeFromWishlist = async (productId) => {
-        if (!token) return;
-        
-        // Optimistic update
-        setWishlistItems(prev => prev.filter(item => item.id !== productId));
-        
-        try {
-            const response = await fetch(`http://localhost:8080/api/wishlist/${productId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (!response.ok) {
-                fetchWishlist();
+        // Optimistic update for both guest and authenticated users
+        setWishlistItems(prev => {
+            const newItems = prev.filter(item => item.id !== productId);
+            if (!token) {
+                localStorage.setItem('wishlist_guest', JSON.stringify(newItems));
             }
-        } catch (error) {
-            fetchWishlist();
+            return newItems;
+        });
+        
+        if (token) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/wishlist/${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (!response.ok) {
+                    fetchWishlist(); // Revert if failed
+                }
+            } catch (error) {
+                fetchWishlist(); // Revert on error
+            }
         }
     };
 
