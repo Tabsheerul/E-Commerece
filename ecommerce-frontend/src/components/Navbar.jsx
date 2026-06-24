@@ -150,7 +150,7 @@ const Navbar = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={cancelLogout}
-            className="fixed inset-0 bg-black/50 backdrop-blur-md z-[100]"
+            className="fixed inset-0 bg-black/50 backdrop-blur-md z-[100] cursor-pointer"
           />
           <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-[101] p-4">
             <motion.div

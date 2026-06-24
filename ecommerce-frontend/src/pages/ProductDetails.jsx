@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { motion, AnimatePresence } from "framer-motion";
 import DeviceSelector from "../components/DeviceSelector";
 
@@ -15,6 +16,7 @@ const TEXT_GRADIENT = {
 const ProductDetails = () => {
   const { id } = useParams();
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +43,10 @@ const ProductDetails = () => {
     setAdded(true);
     // Reset button text after 2 seconds
     setTimeout(() => setAdded(false), 2000);
+    setTimeout(() => setAdded(false), 2000);
   };
+
+  const isWishlisted = product ? isInWishlist(product.id) : false;
 
   // ── Loading state ──
   if (loading) {
@@ -171,42 +176,61 @@ const ProductDetails = () => {
               ))}
             </div>
 
-            {/* Add to Cart Button */}
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              onClick={handleAddToCart}
-              className={`mt-4 w-full flex items-center justify-center gap-3 font-bold py-4 px-8 rounded-full text-sm tracking-wide
-                          transition-all duration-300
-                          ${added
-                            ? 'bg-green-500 text-white shadow-[0_0_40px_rgba(34,197,94,0.4)]'
-                            : error
-                            ? 'bg-red-500 text-white shadow-[0_0_40px_rgba(239,68,68,0.4)] animate-shake'
-                            : 'bg-slate-900 dark:bg-white text-white dark:text-black shadow-[0_0_40px_rgba(139,92,246,0.2)] hover:shadow-[0_0_60px_rgba(139,92,246,0.4)] hover:scale-[1.02]'
-                          }`}
-            >
-              {added ? (
-                <>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                  Added to Cart!
-                </>
-              ) : error ? (
-                <>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                  Please Select a Device
-                </>
-              ) : (
-                <>
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                  Add to Cart
-                </>
-              )}
-            </motion.button>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3 mt-4">
+              {/* Add to Cart Button */}
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={handleAddToCart}
+                className={`flex-1 flex items-center justify-center gap-3 font-bold py-4 px-8 rounded-full text-sm tracking-wide
+                            transition-all duration-300
+                            ${added
+                              ? 'bg-green-500 text-white shadow-[0_0_40px_rgba(34,197,94,0.4)]'
+                              : error
+                              ? 'bg-red-500 text-white shadow-[0_0_40px_rgba(239,68,68,0.4)] animate-shake'
+                              : 'bg-slate-900 dark:bg-white text-white dark:text-black shadow-[0_0_40px_rgba(139,92,246,0.2)] hover:shadow-[0_0_60px_rgba(139,92,246,0.4)] hover:scale-[1.02]'
+                            }`}
+              >
+                {added ? (
+                  <>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Added to Cart!
+                  </>
+                ) : error ? (
+                  <>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    Please Select a Device
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    Add to Cart
+                  </>
+                )}
+              </motion.button>
+
+              {/* Wishlist Button */}
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={() => toggleWishlist(product)}
+                className={`flex-shrink-0 flex items-center justify-center p-4 rounded-full border transition-all duration-300
+                            ${isWishlisted 
+                              ? 'bg-pink-500/10 border-pink-500/50 text-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.3)]' 
+                              : 'bg-white dark:bg-zinc-900 border-slate-200 dark:border-white/10 text-slate-400 dark:text-white/40 hover:text-pink-500 dark:hover:text-pink-400 hover:border-pink-500/50'
+                            }`}
+                title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+              >
+                <svg className="w-6 h-6" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </motion.button>
+            </div>
 
             {/* Trust note */}
             <div className="flex items-center justify-center gap-2 text-xs text-slate-400 dark:text-white/25 mt-2">

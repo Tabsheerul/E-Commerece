@@ -105,7 +105,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/50 backdrop-blur-md z-[100]"
+                        className="fixed inset-0 bg-black/50 backdrop-blur-md z-[100] cursor-pointer"
                     />
                 )}
             </AnimatePresence>
