@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
+import { AuthContext } from '../context/AuthContext';
+import { useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -34,13 +36,29 @@ const FormInput = ({ label, ...props }) => (
 
 const Checkout = () => {
   const { cartItems, getCartTotal, clearCart } = useCart();
+  const { token, user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   const [shipping, setShipping] = useState({
-    customerName: '', email: '', address: '', city: '', zip: ''
+    customerName: user?.username || '', 
+    email: user?.email || '', 
+    address: '', 
+    city: '', 
+    zip: ''
   });
+
+  // Automatically update the form if the user logs in while on this page
+  React.useEffect(() => {
+    if (user) {
+      setShipping(prev => ({
+        ...prev,
+        customerName: prev.customerName || user.username || '',
+        email: prev.email || user.email || ''
+      }));
+    }
+  }, [user]);
 
   const [paymentMethod, setPaymentMethod] = useState('credit_card');
   const [paymentDetails, setPaymentDetails] = useState({
@@ -74,9 +92,14 @@ const Checkout = () => {
         items: formattedItems
       };
 
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       fetch('http://localhost:8080/api/orders', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(orderData),
       })
         .then(response => {
@@ -168,12 +191,12 @@ const Checkout = () => {
         >
           <h2 className="font-bold text-slate-700 dark:text-white/70 text-sm uppercase tracking-[0.15em] mb-6">Shipping Details</h2>
           <form onSubmit={handlePlaceOrder} className="space-y-4">
-            <FormInput label="Full Name"    required type="text"  name="customerName" placeholder="John Doe"              onChange={handleInputChange} />
-            <FormInput label="Email"        required type="email" name="email"        placeholder="john@example.com"       onChange={handleInputChange} />
-            <FormInput label="Address"      required type="text"  name="address"      placeholder="123 Main Street"        onChange={handleInputChange} />
+            <FormInput label="Full Name"    required type="text"  name="customerName" value={shipping.customerName} placeholder="John Doe"              onChange={handleInputChange} />
+            <FormInput label="Email"        required type="email" name="email"        value={shipping.email}        placeholder="john@example.com"       onChange={handleInputChange} />
+            <FormInput label="Address"      required type="text"  name="address"      value={shipping.address}      placeholder="123 Main Street"        onChange={handleInputChange} />
             <div className="grid grid-cols-2 gap-4">
-              <FormInput label="City"     required type="text" name="city" placeholder="New York"  onChange={handleInputChange} />
-              <FormInput label="ZIP Code" required type="text" name="zip"  placeholder="10001"     onChange={handleInputChange} />
+              <FormInput label="City"     required type="text" name="city" value={shipping.city} placeholder="New York"  onChange={handleInputChange} />
+              <FormInput label="ZIP Code" required type="text" name="zip"  value={shipping.zip}  placeholder="10001"     onChange={handleInputChange} />
             </div>
 
             {/* Payment Section */}

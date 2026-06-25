@@ -13,6 +13,7 @@ import Shop from './pages/Shop';
 import ProductDetails from './pages/ProductDetails';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
+import MyOrders from './pages/MyOrders';
 import AdminDashboard from './pages/AdminDashboard';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
@@ -26,7 +27,7 @@ const AnimatedRoutes = () => {
   const prevPath = useRef(location.pathname);
   const direction = useRef(1);
 
-  const pageOrder = { '/': 0, '/shop': 1, '/product': 1.5, '/wishlist': 1.8, '/cart': 2, '/checkout': 2.5, '/admin': 3, '/privacy': 4, '/terms': 4, '/refund': 4 };
+  const pageOrder = { '/': 0, '/shop': 1, '/product': 1.5, '/wishlist': 1.8, '/cart': 2, '/checkout': 2.5, '/my-orders': 2.6, '/admin': 3, '/privacy': 4, '/terms': 4, '/refund': 4 };
   const getBaseRoute = (path) => path.startsWith('/product') ? '/product' : path;
 
   const currPathBase = getBaseRoute(location.pathname);
@@ -51,6 +52,7 @@ const AnimatedRoutes = () => {
     { path: '/product/:id', element: <ProductDetails /> },
     { path: '/cart', element: <Cart /> },
     { path: '/checkout', element: <Checkout /> },
+    { path: '/my-orders', element: <MyOrders /> },
     { path: '/admin', element: <AdminDashboard /> },
     { path: '/privacy', element: <PrivacyPolicy /> },
     { path: '/terms', element: <TermsAndConditions /> },

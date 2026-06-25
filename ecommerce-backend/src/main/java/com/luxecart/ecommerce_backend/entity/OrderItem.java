@@ -17,6 +17,7 @@ public class OrderItem {
     // just in case the main product price changes later!
     private Long productId;
     private String productName;
+    private String device;
     private int quantity;
     private BigDecimal price;
 }

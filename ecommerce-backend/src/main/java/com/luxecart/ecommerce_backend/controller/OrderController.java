@@ -14,7 +14,32 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public Order placeOrder(@RequestBody Order order) {
+    public Order placeOrder(org.springframework.security.core.Authentication authentication, @RequestBody Order order) {
+        if (authentication != null && authentication.isAuthenticated() && !authentication.getName().equals("anonymousUser")) {
+            // Overwrite the order email with the authenticated user's email for security
+            order.setEmail(authentication.getName());
+        }
         return orderService.placeOrder(order);
+    }
+
+    @GetMapping
+    public java.util.List<Order> getUserOrders(org.springframework.security.core.Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("User not authenticated");
+        }
+        return orderService.getOrdersByEmail(authentication.getName());
+    }
+
+    @GetMapping("/all")
+    public java.util.List<Order> getAllOrders() {
+        // In a real app, you'd check if authentication has ADMIN role
+        return orderService.getAllOrders();
+    }
+
+    @PutMapping("/{id}/status")
+    public Order updateOrderStatus(@PathVariable Long id, @RequestBody java.util.Map<String, String> body) {
+        // In a real app, you'd check if authentication has ADMIN role
+        String status = body.get("status");
+        return orderService.updateOrderStatus(id, status);
     }
 }

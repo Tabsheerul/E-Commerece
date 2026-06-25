@@ -156,7 +156,7 @@ const Navbar = () => {
 
                       {/* Dropdown Links */}
                       <div className="p-2 flex flex-col gap-1">
-                        <Link to="#" className="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-violet-600 dark:hover:text-violet-400 rounded-lg transition-colors">
+                        <Link to="/my-orders" onClick={() => setIsProfileOpen(false)} className="flex items-center gap-3 px-3 py-2 text-sm text-slate-600 dark:text-white/70 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-violet-600 dark:hover:text-violet-400 rounded-lg transition-colors">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                           </svg>
