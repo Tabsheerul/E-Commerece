@@ -70,7 +70,38 @@ const Checkout = () => {
   };
 
   const handlePaymentChange = (e) => {
-    setPaymentDetails({ ...paymentDetails, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    if (name === 'expiry') {
+      let cleanValue = value.replace(/\D/g, ''); // Remove non-digits
+      if (cleanValue.length > 0) {
+        if (cleanValue.length >= 2) {
+          let month = parseInt(cleanValue.substring(0, 2), 10);
+          // Auto-fix invalid months seamlessly
+          if (month > 12) cleanValue = '12' + cleanValue.substring(2);
+          if (month === 0) cleanValue = '01' + cleanValue.substring(2);
+          cleanValue = cleanValue.substring(0, 2) + '/' + cleanValue.substring(2, 4);
+        }
+      }
+      setPaymentDetails(prev => ({ ...prev, [name]: cleanValue }));
+      return;
+    }
+
+    if (name === 'cardNumber') {
+      let cleanValue = value.replace(/\D/g, ''); // Remove non-digits
+      // Auto-add spaces every 4 digits
+      let formatted = cleanValue.match(/.{1,4}/g)?.join(' ') || '';
+      setPaymentDetails(prev => ({ ...prev, [name]: formatted.substring(0, 19) }));
+      return;
+    }
+
+    if (name === 'cvc') {
+      let cleanValue = value.replace(/\D/g, ''); // Remove non-digits
+      setPaymentDetails(prev => ({ ...prev, [name]: cleanValue.substring(0, 4) }));
+      return;
+    }
+
+    setPaymentDetails(prev => ({ ...prev, [name]: value }));
   };
 
   const handlePlaceOrder = (e) => {
@@ -82,6 +113,7 @@ const Checkout = () => {
       const formattedItems = cartItems.map(item => ({
         productId: item.id,
         productName: item.name,
+        device: item.device,
         quantity: item.quantity,
         price: item.price
       }));
@@ -230,12 +262,12 @@ const Checkout = () => {
                   initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                   className="space-y-4"
                 >
-                  <FormInput label="Card Number" required type="text" name="cardNumber" placeholder="0000 0000 0000 0000" maxLength="19" onChange={handlePaymentChange} />
+                  <FormInput label="Card Number" required type="text" name="cardNumber" value={paymentDetails.cardNumber} placeholder="0000 0000 0000 0000" maxLength="19" onChange={handlePaymentChange} />
                   <div className="grid grid-cols-2 gap-4">
-                    <FormInput label="Expiry Date" required type="text" name="expiry" placeholder="MM/YY" maxLength="5" onChange={handlePaymentChange} />
-                    <FormInput label="CVC" required type="text" name="cvc" placeholder="123" maxLength="4" onChange={handlePaymentChange} />
+                    <FormInput label="Expiry Date" required type="text" name="expiry" value={paymentDetails.expiry} placeholder="MM/YY" maxLength="5" onChange={handlePaymentChange} />
+                    <FormInput label="CVC" required type="password" name="cvc" value={paymentDetails.cvc} placeholder="123" maxLength="4" onChange={handlePaymentChange} />
                   </div>
-                  <FormInput label="Name on Card" required type="text" name="nameOnCard" placeholder="John Doe" onChange={handlePaymentChange} />
+                  <FormInput label="Name on Card" required type="text" name="nameOnCard" value={paymentDetails.nameOnCard} placeholder="John Doe" onChange={handlePaymentChange} />
                 </motion.div>
               ) : paymentMethod === 'bhim_upi' ? (
                 <motion.div
