@@ -1,7 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { AuthContext } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import AuthModal from '../components/AuthModal';
 
 // Shared gradient style matching the Hero page
 const TEXT_GRADIENT = {
@@ -13,6 +15,10 @@ const TEXT_GRADIENT = {
 
 const Cart = () => {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart();
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [showAuthWarning, setShowAuthWarning] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Animation variant for each cart item entering and exiting
   const itemVariants = {
@@ -59,8 +65,57 @@ const Cart = () => {
   }
 
   return (
-    <div className="pt-32 pb-24 px-6 lg:px-12 max-w-7xl mx-auto min-h-screen
-                    bg-slate-50 dark:bg-[#0a0a0f] transition-colors duration-500">
+    <>
+      {/* ── Guest Warning Modal ── */}
+      <AnimatePresence>
+        {showAuthWarning && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 rounded-3xl p-8 max-w-sm w-full shadow-2xl relative overflow-hidden"
+            >
+              {/* Decorative background element */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-3xl -mr-10 -mt-10" />
+              
+              <div className="w-16 h-16 bg-violet-100 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 rounded-full flex items-center justify-center text-3xl mb-6 shadow-inner">
+                🔒
+              </div>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Create an Account</h3>
+              <p className="text-slate-500 dark:text-white/50 text-sm mb-8 leading-relaxed">
+                To guarantee the security of your order and allow you to track its status, please sign in or create an account to proceed.
+              </p>
+              
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => {
+                    setShowAuthWarning(false);
+                    setShowAuthModal(true);
+                  }}
+                  className="w-full py-3.5 bg-slate-900 dark:bg-white text-white dark:text-black font-bold rounded-xl text-sm shadow-md hover:scale-[1.02] active:scale-[0.98] transition-transform"
+                >
+                  Sign In / Sign Up
+                </button>
+                <button
+                  onClick={() => setShowAuthWarning(false)}
+                  className="w-full py-3.5 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-white/70 font-bold rounded-xl text-sm hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+
+      <div className="pt-32 pb-24 px-6 lg:px-12 max-w-7xl mx-auto min-h-screen
+                      bg-slate-50 dark:bg-[#0a0a0f] transition-colors duration-500">
 
       {/* ── Page Headline ── */}
       <motion.div
@@ -176,13 +231,19 @@ const Cart = () => {
             </div>
 
             {/* Checkout button */}
-            <Link to="/checkout">
-              <button className="w-full bg-slate-900 dark:bg-white text-white dark:text-black font-bold py-4 rounded-full text-sm tracking-wide
+            <button 
+              onClick={() => {
+                if (!user) {
+                  setShowAuthWarning(true);
+                } else {
+                  navigate('/checkout');
+                }
+              }}
+              className="w-full bg-slate-900 dark:bg-white text-white dark:text-black font-bold py-4 rounded-full text-sm tracking-wide
                                  shadow-[0_0_40px_rgba(139,92,246,0.2)] hover:shadow-[0_0_60px_rgba(139,92,246,0.35)]
                                  hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
-                Proceed to Checkout →
-              </button>
-            </Link>
+              Proceed to Checkout →
+            </button>
 
             {/* Security note */}
             <div className="mt-5 flex items-center justify-center gap-2 text-xs text-slate-400 dark:text-white/25">
@@ -196,6 +257,7 @@ const Cart = () => {
 
       </div>
     </div>
+    </>
   );
 };
 
