@@ -3,7 +3,7 @@ import { useCart } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import { useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Shared gradient style matching the Hero page
 const TEXT_GRADIENT = {
@@ -139,7 +139,13 @@ const Checkout = () => {
             setIsSuccess(true);
             clearCart();
             // Give the success animation time to show, then redirect
-            setTimeout(() => navigate('/cart'), 2000);
+            setTimeout(() => {
+              if (token) {
+                navigate('/my-orders');
+              } else {
+                navigate('/shop');
+              }
+            }, 3500); // Wait for the 3.5 seconds to watch the animation
           } else {
             alert("Failed to place order. Please try again.");
             setIsSubmitting(false);
@@ -164,11 +170,41 @@ const Checkout = () => {
   }
 
   return (
-    <div className="pt-28 pb-24 px-6 min-h-screen
-                    bg-slate-50 dark:bg-[#0a0a0f] transition-colors duration-500
-                    flex items-start justify-center">
+    <>
+      {/* Success Modal Overlay */}
+      <AnimatePresence>
+        {isSuccess && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-white/80 dark:bg-black/80 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 20 }} animate={{ scale: 1, y: 0 }} transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 rounded-[2rem] p-10 max-w-sm w-full mx-6 shadow-2xl text-center"
+            >
+              <div className="w-20 h-20 mx-auto bg-green-100 dark:bg-green-500/20 text-green-500 rounded-full flex items-center justify-center text-4xl mb-6 shadow-[0_0_40px_rgba(34,197,94,0.3)]">
+                ✓
+              </div>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Order Confirmed!</h2>
+              <p className="text-sm text-slate-500 dark:text-white/50 mb-6">
+                Your luxury skin is being prepared. {token ? "Redirecting to your orders..." : "Redirecting to shop..."}
+              </p>
+              <div className="w-full bg-slate-100 dark:bg-white/5 h-1.5 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 3.5, ease: "linear" }}
+                  className="h-full bg-gradient-to-r from-green-400 to-emerald-500"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <div className="w-full max-w-2xl">
+      <div className="pt-28 pb-24 px-6 min-h-screen
+                      bg-slate-50 dark:bg-[#0a0a0f] transition-colors duration-500
+                      flex items-start justify-center">
+
+        <div className="w-full max-w-2xl">
 
         {/* ── Header ── */}
         <motion.div
@@ -319,6 +355,7 @@ const Checkout = () => {
 
       </div>
     </div>
+    </>
   );
 };
 
