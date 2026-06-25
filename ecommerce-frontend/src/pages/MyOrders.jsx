@@ -140,6 +140,27 @@ const MyOrders = () => {
                   </div>
                 </div>
 
+                {/* ── Order Items (Visible Before Expand) ── */}
+                <div className="mt-6 mb-2 space-y-3">
+                  {order.items?.map((item, i) => (
+                    <div key={i} className="flex justify-between items-center bg-slate-50 dark:bg-white/5 rounded-2xl p-4 border border-slate-100 dark:border-white/5">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-slate-200 dark:bg-black/50 rounded-xl flex items-center justify-center text-xl shadow-inner">
+                          📦
+                        </div>
+                        <div>
+                          <p className="font-bold text-sm text-slate-900 dark:text-white">{item.productName}</p>
+                          <p className="text-xs text-slate-500 dark:text-white/40 mt-0.5">Device: {item.device || 'N/A'}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-sm text-slate-900 dark:text-white">${item.price?.toFixed(2)}</p>
+                        <p className="text-xs text-slate-500 dark:text-white/40 mt-0.5">Qty: {item.quantity}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
                 <AnimatePresence>
                   {expandedOrderId === order.id && (
                     <motion.div
@@ -178,27 +199,6 @@ const MyOrders = () => {
                               ))}
                             </div>
                           </div>
-                        </div>
-
-                        {/* ── Order Items ── */}
-                        <div className="space-y-4 mb-6">
-                          {order.items?.map((item, i) => (
-                            <div key={i} className="flex justify-between items-center bg-slate-50 dark:bg-white/5 rounded-2xl p-4 border border-slate-100 dark:border-white/5">
-                              <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-slate-200 dark:bg-black/50 rounded-xl flex items-center justify-center text-xl shadow-inner">
-                                  📦
-                                </div>
-                                <div>
-                                  <p className="font-bold text-sm text-slate-900 dark:text-white">{item.productName}</p>
-                                  <p className="text-xs text-slate-500 dark:text-white/40 mt-0.5">Device: {item.device || 'N/A'}</p>
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                <p className="font-bold text-sm text-slate-900 dark:text-white">${item.price?.toFixed(2)}</p>
-                                <p className="text-xs text-slate-500 dark:text-white/40 mt-0.5">Qty: {item.quantity}</p>
-                              </div>
-                            </div>
-                          ))}
                         </div>
 
                         {/* ── Shipping Details ── */}
