@@ -13,11 +13,16 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private com.luxecart.ecommerce_backend.repository.UserRepository userRepository;
+
     @PostMapping
     public Order placeOrder(org.springframework.security.core.Authentication authentication, @RequestBody Order order) {
         if (authentication != null && authentication.isAuthenticated() && !authentication.getName().equals("anonymousUser")) {
             // Overwrite the order email with the authenticated user's email for security
-            order.setEmail(authentication.getName());
+            String email = authentication.getName();
+            order.setEmail(email);
+            userRepository.findByEmail(email).ifPresent(order::setUser);
         }
         return orderService.placeOrder(order);
     }
@@ -27,7 +32,10 @@ public class OrderController {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("User not authenticated");
         }
-        return orderService.getOrdersByEmail(authentication.getName());
+        String email = authentication.getName();
+        return userRepository.findByEmail(email)
+                .map(user -> orderService.getOrdersByUser(user))
+                .orElseGet(() -> orderService.getOrdersByEmail(email));
     }
 
     @GetMapping("/all")

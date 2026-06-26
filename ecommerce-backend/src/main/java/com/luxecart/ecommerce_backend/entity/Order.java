@@ -15,6 +15,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private User user;
+
     private String customerName;
     private String email;
     private String address;
