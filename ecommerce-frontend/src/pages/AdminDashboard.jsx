@@ -770,16 +770,23 @@ const AdminDashboard = () => {
                       <td className="p-5 text-sm text-slate-500 dark:text-white/40">
                         {new Date(order.orderDate).toLocaleDateString()}
                       </td>
-                      <td className="p-5 pr-6 text-right">
-                        <select
-                          value={order.status}
-                          onChange={(e) => handleUpdateStatus(order.id, e.target.value)}
-                          className="px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-800 text-slate-700 dark:text-white focus:ring-2 focus:ring-violet-500 outline-none"
-                        >
-                          <option value="PENDING">PENDING</option>
-                          <option value="SHIPPED">SHIPPED</option>
-                          <option value="DELIVERED">DELIVERED</option>
-                        </select>
+                      <td className="p-5 pr-6 text-right w-48">
+                        <div className="relative inline-block text-left">
+                          <CustomDropdown
+                            value={order.status}
+                            onChange={(val) => handleUpdateStatus(order.id, val)}
+                            options={[
+                              { label: 'PENDING', value: 'PENDING' },
+                              { label: 'SHIPPED', value: 'SHIPPED' },
+                              { label: 'DELIVERED', value: 'DELIVERED' }
+                            ]}
+                            buttonClassName={`w-full px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 border shadow-sm
+                              ${order.status === 'DELIVERED' ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20' 
+                                : order.status === 'SHIPPED' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20'
+                                : 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20'}`}
+                            dropdownClassName="right-0 w-40 mt-2"
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))
