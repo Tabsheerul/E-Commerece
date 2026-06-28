@@ -198,6 +198,47 @@ const MyOrders = () => {
     </div>
   );
 
+  const renderPastOrderList = (orderList) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      {orderList.map((order, index) => (
+        <motion.div
+          key={order.id}
+          initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: index * 0.05 }}
+          className="bg-white/50 dark:bg-zinc-900/30 border border-slate-200 dark:border-white/5 rounded-3xl p-6 hover:bg-white dark:hover:bg-zinc-900/50 hover:shadow-md transition-all duration-300"
+        >
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <p className="text-[10px] font-bold text-slate-400 dark:text-white/30 tracking-widest uppercase mb-1">Order #{order.id}</p>
+              <p className="text-sm font-semibold text-slate-700 dark:text-white/70">
+                {new Date(order.orderDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+              </p>
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <p className="text-lg font-black text-slate-900 dark:text-white">${order.totalAmount?.toFixed(2)}</p>
+              <span className="px-2 py-0.5 bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400 rounded-md text-[10px] font-bold tracking-widest uppercase border border-green-200/50 dark:border-green-500/20">
+                Delivered
+              </span>
+            </div>
+          </div>
+          
+          <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/5 space-y-3">
+            {order.items?.map((item, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center text-xs shrink-0">
+                  📦
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-bold text-slate-800 dark:text-white/90 truncate">{item.productName}</p>
+                  <p className="text-[10px] text-slate-400 dark:text-white/40">Qty: {item.quantity}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="pt-32 pb-24 px-6 lg:px-12 min-h-screen bg-slate-50 dark:bg-[#0a0a0f] transition-colors duration-500">
       <div className="max-w-4xl mx-auto">
@@ -245,7 +286,7 @@ const MyOrders = () => {
                   <span className="w-2 h-2 rounded-full bg-slate-300 dark:bg-white/20"></span>
                   Past Orders
                 </h2>
-                {renderOrderList(pastOrders)}
+                {renderPastOrderList(pastOrders)}
               </div>
             )}
           </div>
