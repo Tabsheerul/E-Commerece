@@ -21,8 +21,8 @@ public class OrderService {
         return orderRepository.findByEmailOrderByOrderDateDesc(email);
     }
 
-    public java.util.List<Order> getOrdersByUser(com.luxecart.ecommerce_backend.entity.User user) {
-        return orderRepository.findByUserOrderByOrderDateDesc(user);
+    public java.util.List<Order> getOrdersByUserOrEmail(com.luxecart.ecommerce_backend.entity.User user, String email) {
+        return orderRepository.findByUserOrEmailOrderByOrderDateDesc(user, email);
     }
 
     public java.util.List<Order> getAllOrders() {

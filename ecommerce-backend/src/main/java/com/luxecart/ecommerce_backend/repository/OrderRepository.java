@@ -10,5 +10,6 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUserOrderByOrderDateDesc(com.luxecart.ecommerce_backend.entity.User user);
     List<Order> findByEmailOrderByOrderDateDesc(String email);
+    List<Order> findByUserOrEmailOrderByOrderDateDesc(com.luxecart.ecommerce_backend.entity.User user, String email);
     List<Order> findAllByOrderByOrderDateDesc();
 }

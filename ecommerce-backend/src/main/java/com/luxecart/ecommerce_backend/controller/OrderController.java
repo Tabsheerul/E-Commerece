@@ -34,7 +34,7 @@ public class OrderController {
         }
         String email = authentication.getName();
         return userRepository.findByEmail(email)
-                .map(user -> orderService.getOrdersByUser(user))
+                .map(user -> orderService.getOrdersByUserOrEmail(user, email))
                 .orElseGet(() -> orderService.getOrdersByEmail(email));
     }
 
