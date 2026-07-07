@@ -84,6 +84,7 @@ const AnimatedRoutes = () => {
 };
 
 import Footer from './components/Footer';
+import ScrollToTopButton from './components/ScrollToTopButton';
 
 // Inside App.jsx
 const App = () => {
@@ -99,6 +100,7 @@ const App = () => {
                 <AnimatedRoutes />
               </main>
               <Footer />
+              <ScrollToTopButton />
             </div>
           </CartProvider>
         </ThemeProvider>
