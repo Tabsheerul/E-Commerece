@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useWishlist } from '../context/WishlistContext';
-import { useCart } from '../context/CartContext';
 
 // Reusable gradient style (matches Hero page)
 const TEXT_GRADIENT = {
@@ -14,22 +13,12 @@ const TEXT_GRADIENT = {
 
 const ProductCard = ({ product, index = 0 }) => {
   const { toggleWishlist, isInWishlist } = useWishlist();
-  const { addToCart } = useCart();
-  const [added, setAdded] = useState(false);
   const isWishlisted = isInWishlist(product.id);
 
   const handleWishlistClick = (e) => {
     e.preventDefault(); // Prevent navigating to product details
     e.stopPropagation();
     toggleWishlist(product);
-  };
-
-  const handleAddToCart = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    addToCart(product);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
   };
 
   return (
@@ -79,16 +68,12 @@ const ProductCard = ({ product, index = 0 }) => {
             </svg>
           </button>
 
-          {/* Quick-add button appears on hover */}
-          <button 
-            onClick={handleAddToCart}
-            className={`absolute bottom-5 left-1/2 -translate-x-1/2 translate-y-3 opacity-0
-                        group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300
-                        ${added ? 'bg-emerald-500 text-white' : 'bg-white text-black hover:bg-slate-100'} 
-                        text-xs font-bold px-5 py-2.5 rounded-full whitespace-nowrap shadow-xl z-20`}
-          >
-            {added ? 'Added! ✓' : '+ Quick Add'}
-          </button>
+          {/* Select Device prompt appears on hover */}
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 translate-y-3 opacity-0
+                          group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300
+                          bg-white text-black text-xs font-bold px-5 py-2.5 rounded-full whitespace-nowrap shadow-xl z-20">
+            Select Device →
+          </div>
         </div>
 
         {/* Product info row */}
