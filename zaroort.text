@@ -1,0 +1,4 @@
+@SpringBootApplication: This is a "magic" annotation. It is actually a combination of three underlying annotations:
+    @Configuration: Tells Spring that this class can be used as a source of bean definitions.
+    @EnableAutoConfiguration: This is the heart of Spring Boot. It tells Spring to start adding beans based on classpath settings, other beans, and various property settings. For example, if it sees spring-webmvc on the classpath (which we add in pom.xml), it automatically flags the application as a web application and sets up a DispatcherServlet and embedded Tomcat server.
+    @ComponentScan: Tells Spring to look for other components, configurations, and services in the com.luxecart.ecommerce_backend package, allowing it to find your controllers and services automatically.
