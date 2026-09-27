@@ -382,21 +382,28 @@ const AdminDashboard = () => {
                         </td>
 
                         {/* Actions */}
-                        <td className="p-5 pr-6 text-right space-x-4">
-                          <button
-                            onClick={() => openEdit(product)}
-                            className="text-xs font-bold text-violet-600 hover:text-violet-800
-                                       dark:text-violet-400 dark:hover:text-violet-300 transition-colors"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(product.id)}
-                            className="text-xs font-bold text-red-500 hover:text-red-700
-                                       dark:text-red-400 dark:hover:text-red-300 transition-colors"
-                          >
-                            Delete
-                          </button>
+                        <td className="p-5 pr-6 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => openEdit(product)}
+                              className="group relative p-2 rounded-xl text-violet-500 hover:text-violet-700 hover:bg-violet-50 dark:hover:bg-violet-500/10 dark:text-violet-400 dark:hover:text-violet-300 transition-all duration-200 hover:scale-110 active:scale-95"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                              </svg>
+                              <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 dark:bg-white text-white dark:text-black text-[10px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none whitespace-nowrap">Edit Product</span>
+                            </button>
+
+                            <button
+                              onClick={() => handleDelete(product.id)}
+                              className="group relative p-2 rounded-xl text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-500/10 dark:text-red-400 dark:hover:text-red-300 transition-all duration-200 hover:scale-110 active:scale-95"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              <span className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 dark:bg-white text-white dark:text-black text-[10px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none whitespace-nowrap">Delete</span>
+                            </button>
+                          </div>
                         </td>
                       </motion.tr>
                     ))}
